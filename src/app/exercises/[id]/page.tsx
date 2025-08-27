@@ -30,7 +30,7 @@ export default function ExerciseDetailPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching exercise details");
-        logger.error("Error fetching exercise details", err);
+  logger.error("Error fetching exercise details", err as Record<string, unknown>);
       } finally {
         setLoading(false);
       }

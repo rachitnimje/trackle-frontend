@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useState, useEffect, FormEvent } from "react";
+import React, { Suspense, useState, useEffect, FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -33,7 +32,7 @@ import { ArrowLeftIcon } from "@/components/Icons";
 import { MessageOverlay } from "@/components/MessageOverlay";
 import { logger } from "@/utils/logger";
 
-export default function CreateWorkoutPage() {
+function CreateWorkoutPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -734,5 +733,15 @@ export default function CreateWorkoutPage() {
         onCancel={() => setShowDraftOverlay(false)}
       />
     </div>
+  );
+}
+
+export default function CreateWorkoutPage() {
+  return (
+    <Suspense
+      fallback={<div className="p-8 text-center">Loading workout form...</div>}
+    >
+      <CreateWorkoutPageInner />
+    </Suspense>
   );
 }

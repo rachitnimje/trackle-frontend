@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTemplates, deleteTemplate } from "@/api/templates";
@@ -23,7 +23,7 @@ import { MessageOverlay } from "@/components/MessageOverlay";
 import { ConfirmDelete } from "@/components/ConfirmDelete";
 import { logger } from "@/utils/logger";
 
-export default function TemplatesPage() {
+function TemplatesPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [templates, setTemplates] = useState<TemplateListItem[]>([]);
@@ -435,5 +435,15 @@ export default function TemplatesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TemplatesPage() {
+  return (
+    <Suspense
+      fallback={<div className="p-8 text-center">Loading templates...</div>}
+    >
+      <TemplatesPageInner />
+    </Suspense>
   );
 }

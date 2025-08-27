@@ -49,15 +49,16 @@ export default function ExerciseEntryInput({
               <Input
                 type="number"
                 min="1"
-                value={entry.reps}
-                onChange={(e) =>
+                value={entry.reps === 0 ? "" : entry.reps}
+                onChange={(e) => {
+                  const val = e.target.value;
                   onUpdateSet(
                     exerciseId,
                     index,
                     "reps",
-                    parseInt(e.target.value) || 0
-                  )
-                }
+                    val === "" ? 0 : parseInt(val)
+                  );
+                }}
                 className="h-8 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               />
             </div>
@@ -66,15 +67,16 @@ export default function ExerciseEntryInput({
                 type="number"
                 min="0"
                 step="0.5"
-                value={entry.weight}
-                onChange={(e) =>
+                value={entry.weight === 0 ? "" : entry.weight}
+                onChange={(e) => {
+                  const val = e.target.value;
                   onUpdateSet(
                     exerciseId,
                     index,
                     "weight",
-                    parseFloat(e.target.value) || 0
-                  )
-                }
+                    val === "" ? 0 : parseFloat(val)
+                  );
+                }}
                 className="h-8 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               />
             </div>

@@ -74,7 +74,7 @@ export default function PWAInstallPrompt() {
     return null;
   }
   return (
-    <div className="fixed bottom-16 right-4 z-50 p-4 rounded-lg bg-card shadow-lg max-w-xs border">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 p-4 rounded-lg bg-card shadow-lg max-w-xs border">
       <div className="flex flex-col space-y-2">
         <div className="text-sm font-medium">Install Trackle App</div>
         <p className="text-xs text-muted-foreground">

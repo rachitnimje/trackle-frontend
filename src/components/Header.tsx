@@ -14,10 +14,10 @@ const Header = () => {
 
   return (
     <header className="border-b bg-background sticky top-0 z-10 rounded-bl-lg rounded-br-lg">
-      <div className="container mx-auto py-3 px-4 flex justify-between items-center">
+      <div className="container mx-auto py-5 px-4 flex justify-between items-center min-h-[64px]">
         <Link href="/" className="flex items-center space-x-2 text-primary">
-          <DumbbellIcon className="w-6 h-6" />
-          <span className="font-bold text-xl">Trackle</span>
+          <DumbbellIcon className="w-7 h-7" />
+          <span className="font-extrabold text-2xl tracking-wide">Trackle</span>
         </Link>
 
         {!loading && (

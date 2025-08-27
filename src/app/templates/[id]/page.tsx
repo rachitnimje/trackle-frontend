@@ -197,7 +197,7 @@ export default function TemplateDetailPage() {
               <span className="block text-s text-muted-foreground mb-1">
                 Description
               </span>
-              <span className="block text-sm break-words">
+              <span className="block text-s break-words">
                 {template.description}
               </span>
             </div>

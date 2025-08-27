@@ -391,7 +391,7 @@ export default function CreateExercisePage() {
                 type="submit"
                 disabled={loading}
                 className="w-full h-9 text-lg font-medium"
-                variant="destructive"
+                variant="default"
               >
                 {loading ? "Creating..." : "Create"}
               </Button>

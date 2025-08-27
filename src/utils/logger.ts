@@ -1,13 +1,5 @@
 // Production-safe logging utility
 
-interface LogMessage {
-  level: "log" | "error" | "warn" | "info";
-  message: string;
-  data?: Record<string, unknown>;
-  timestamp: string;
-  context?: string;
-}
-
 // Check if we're in development mode
 const isDevelopment = process.env.NODE_ENV === "development";
 

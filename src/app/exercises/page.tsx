@@ -494,7 +494,9 @@ export default function ExercisesPage() {
                 variant="secondary"
                 className="flex items-center gap-1 text-xs max-w-full"
               >
-                <span className="truncate">Search: "{searchQuery}"</span>
+                <span className="truncate">
+                  Search: &quot;{searchQuery}&quot;
+                </span>
                 <button
                   onClick={() => setSearchQuery("")}
                   className="ml-1 hover:text-foreground flex-shrink-0"
@@ -632,7 +634,7 @@ export default function ExercisesPage() {
           ))
         ) : exercises.length > 0 ? (
           // Show exercises when loaded with badge, circular image and check icon
-          exercises.map((exercise, index) => (
+          exercises.map((exercise) => (
             <Link
               href={`/exercises/${exercise.id}`}
               key={exercise.id}

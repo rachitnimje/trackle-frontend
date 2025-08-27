@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { getWorkouts, deleteWorkout } from "@/api/workouts";
 import { getTemplates } from "@/api/templates";
 import { Workout, TemplateListItem } from "@/api/types";
@@ -43,7 +42,7 @@ export default function WorkoutsPage() {
   // Sorting and filtering
   const [sortBy, setSortBy] = useState("date");
   const [activeView, setActiveView] = useState<"sort" | "filter">("sort");
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [selectedTemplateId] = useState<string>("");
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;

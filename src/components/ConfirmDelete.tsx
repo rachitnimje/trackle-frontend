@@ -48,7 +48,7 @@ export const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
             {itemName && (
               <span className="font-semibold text-gray-900 dark:text-foreground">
                 {" "}
-                "{itemName}"
+                &quot;{itemName}&quot;
               </span>
             )}
             ?

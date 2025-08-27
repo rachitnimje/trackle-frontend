@@ -361,7 +361,7 @@ function TemplatesPageInner() {
                     <div className="flex items-center justify-between">
                       {/* Template info */}
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg font-semibold mb-1 truncate">
+                        <CardTitle className="text-xl font-semibold mb-1 truncate">
                           {template.name}
                         </CardTitle>
 
@@ -371,10 +371,10 @@ function TemplatesPageInner() {
                           </p>
                         )}
 
-                        <div className="flex items-center text-xs text-muted-foreground">
+                        <div className="flex items-center text-sm text-muted-foreground">
                           <CalendarIcon className="h-3.5 w-3.5 mr-1" />
                           <span className="truncate">
-                            Created{" "}
+                            {" "}
                             {new Date(template.created_at).toLocaleDateString(
                               "en-US",
                               {

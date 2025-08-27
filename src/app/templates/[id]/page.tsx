@@ -126,7 +126,7 @@ export default function TemplateDetailPage() {
         loading={isDeleting}
       />
 
-      <div className="mb-2 py-1">
+      <div className="mb-2 py-2">
         <Link
           href="/templates"
           className="inline-flex items-center text-muted-foreground hover:text-foreground text-sm mb-1"
@@ -138,7 +138,7 @@ export default function TemplateDetailPage() {
       <div className="space-y-3">
         {/* title with start workout button */}
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold break-words pr-2 flex-1 min-w-0">
+          <h1 className="text-3xl font-bold break-words pr-2 flex-1 min-w-0">
             {template.name}
           </h1>
           <Button
@@ -152,7 +152,7 @@ export default function TemplateDetailPage() {
         </div>
 
         {/* creation and update time */}
-        <div className="flex flex-row gap-4 text-xs overflow-x-auto">
+        <div className="flex flex-row gap-4 text-m overflow-x-auto">
           <div className="flex items-center flex-shrink-0">
             <CalendarIcon className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
             <span>

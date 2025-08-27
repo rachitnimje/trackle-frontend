@@ -266,137 +266,6 @@ export default function WorkoutDetailPage() {
     });
   }
 
-  // Reusable ExerciseEntryInput component for editing sets
-  // function ExerciseEntryInput({
-  //   exerciseId,
-  //   exerciseName,
-  //   entries,
-  //   onUpdateSet,
-  //   onAddSet,
-  //   onRemoveSet,
-  // }: {
-  //   exerciseId: number;
-  //   exerciseName: string;
-  //   entries: { setNumber: number; reps: number; weight: number }[];
-  //   onUpdateSet: (
-  //     exerciseId: number,
-  //     setIndex: number,
-  //     field: "reps" | "weight",
-  //     value: number
-  //   ) => void;
-  //   onAddSet: (exerciseId: number) => void;
-  //   onRemoveSet: (exerciseId: number, setIdx: number) => void;
-  // }) {
-  //   return (
-  //     <div className="bg-card border rounded-lg p-4 mb-4">
-  //       <div className="flex items-center justify-between mb-3">
-  //         <h3 className="font-medium flex items-center text-card-foreground">
-  //           {exerciseName}
-  //         </h3>
-  //       </div>
-  //       <div className="space-y-3">
-  //         <div className="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground px-1">
-  //           <div className="col-span-2">Set</div>
-  //           <div className="col-span-4">Reps</div>
-  //           <div className="col-span-4">Weight (lbs)</div>
-  //           <div className="col-span-2"></div>
-  //         </div>
-  //         {entries.map((entry, index) => (
-  //           <div
-  //             key={`${exerciseId}-set-${index}`}
-  //             className="grid grid-cols-12 gap-2 items-center"
-  //           >
-  //             <div className="col-span-2">
-  //               <div className="w-8 h-8 rounded-full bg-muted border flex items-center justify-center text-sm font-medium text-muted-foreground">
-  //                 {entry.setNumber}
-  //               </div>
-  //             </div>
-  //             <div className="col-span-4">
-  //               <Input
-  //                 type="number"
-  //                 min="1"
-  //                 value={entry.reps}
-  //                 onChange={(e) =>
-  //                   onUpdateSet(
-  //                     exerciseId,
-  //                     index,
-  //                     "reps",
-  //                     parseInt(e.target.value) || 0
-  //                   )
-  //                 }
-  //                 className="h-8 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-  //               />
-  //             </div>
-  //             <div className="col-span-4">
-  //               <Input
-  //                 type="number"
-  //                 min="0"
-  //                 step="0.5"
-  //                 value={entry.weight}
-  //                 onChange={(e) =>
-  //                   onUpdateSet(
-  //                     exerciseId,
-  //                     index,
-  //                     "weight",
-  //                     parseFloat(e.target.value) || 0
-  //                   )
-  //                 }
-  //                 className="h-8 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-  //               />
-  //             </div>
-  //             <div className="col-span-2 flex justify-center">
-  //               <button
-  //                 type="button"
-  //                 onClick={() => onRemoveSet(exerciseId, index)}
-  //                 className="text-muted-foreground hover:text-red-500 transition-colors h-8 w-8 flex items-center justify-center rounded-full hover:bg-red-50"
-  //               >
-  //                 <svg
-  //                   xmlns="http://www.w3.org/2000/svg"
-  //                   width="16"
-  //                   height="16"
-  //                   viewBox="0 0 24 24"
-  //                   fill="none"
-  //                   stroke="currentColor"
-  //                   strokeWidth="2"
-  //                   strokeLinecap="round"
-  //                   strokeLinejoin="round"
-  //                 >
-  //                   <line x1="18" y1="6" x2="6" y2="18"></line>
-  //                   <line x1="6" y1="6" x2="18" y2="18"></line>
-  //                 </svg>
-  //               </button>
-  //             </div>
-  //           </div>
-  //         ))}
-  //         <Button
-  //           type="button"
-  //           variant="outline"
-  //           size="sm"
-  //           onClick={() => onAddSet(exerciseId)}
-  //           className="w-full mt-3"
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             width="16"
-  //             height="16"
-  //             viewBox="0 0 24 24"
-  //             fill="none"
-  //             stroke="currentColor"
-  //             strokeWidth="2"
-  //             strokeLinecap="round"
-  //             strokeLinejoin="round"
-  //             className="mr-1"
-  //           >
-  //             <line x1="12" y1="5" x2="12" y2="19"></line>
-  //             <line x1="5" y1="12" x2="19" y2="12"></line>
-  //           </svg>
-  //           Add Set
-  //         </Button>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className="pb-16 px-2">
       {/* Back button */}
@@ -410,72 +279,6 @@ export default function WorkoutDetailPage() {
 
       {/* Editable Draft Section */}
       {workout.status === "draft" ? (
-        // <div className="grid gap-2 mt-1">
-        //   <h1 className="text-2xl font-bold mb-2">Workout Draft</h1>
-
-        //   <div className="flex flex-col gap-2">
-        //     <Label htmlFor="name">Workout Name</Label>
-        //     <Input
-        //       id="name"
-        //       value={editName}
-        //       onChange={(e) => setEditName(e.target.value)}
-        //       className="mt-1"
-        //     />
-        //   </div>
-
-        //   <div className="flex flex-col gap-2 mt-1">
-        //     <Label>Template</Label>
-        //     <div className="border rounded mt-1 px-2 py-1 bg-muted text-sm text-muted-foreground">
-        //       {workout.template_name}
-        //     </div>
-        //   </div>
-
-        //   <div className="flex flex-col gap-2">
-        //     <Label htmlFor="notes" className="text-sm">
-        //       Notes
-        //     </Label>
-        //     <Textarea
-        //       id="notes"
-        //       value={editNotes}
-        //       onChange={(e) => setEditNotes(e.target.value)}
-        //       placeholder="How did the workout go? Any PRs?"
-        //       rows={2}
-        //     />
-        //   </div>
-
-        //   <div className="flex flex-col gap-2">
-        //     <Label className="text-xl">Exercises</Label>
-        //     {Object.entries(editEntries).map(([exerciseId, sets]) => (
-        //       <ExerciseEntryInput
-        //         key={exerciseId}
-        //         exerciseId={Number(exerciseId)}
-        //         exerciseName={exerciseNames[Number(exerciseId)]}
-        //         entries={sets}
-        //         onUpdateSet={handleEntryChange}
-        //         onAddSet={addSet}
-        //         onRemoveSet={removeSet}
-        //       />
-        //     ))}
-        //   </div>
-        //   <div className="flex gap-4 mt-4">
-        //     <Button
-        //       onClick={handleUpdateDraft}
-        //       disabled={editLoading}
-        //       className="w-1/2"
-        //     >
-        //       {editLoading ? "Saving..." : "Save Draft"}
-        //     </Button>
-        //     <Button
-        //       variant="destructive"
-        //       onClick={handleLogWorkout}
-        //       disabled={editLoading}
-        //       className="w-1/2"
-        //     >
-        //       {editLoading ? "Logging..." : "Log Workout"}
-        //     </Button>
-        //   </div>
-        // </div>
-
         <div className="grid gap-2 mt-1">
           <h1 className="text-2xl font-bold mb-2">Workout Draft</h1>
           <div className="flex flex-col gap-2">
@@ -540,11 +343,11 @@ export default function WorkoutDetailPage() {
         </div>
       ) : (
         <div>
-          {/* Workout Header - More compact */}
+          {/* Workout Header */}
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-xl font-bold pb-1">{workout.name}</h1>
-              <div className="flex items-center mt-1 text-muted-foreground text-sm pb-1">
+              <h1 className="text-2xl font-bold pb-1">{workout.name}</h1>
+              <div className="flex items-center mt-1 text-muted-foreground text-m pb-1">
                 <CalendarIcon className="h-4 w-4 mr-1" />
                 <span>
                   {workout.created_at
@@ -564,7 +367,7 @@ export default function WorkoutDetailPage() {
               </div>
               {/* workout time */}
               {workout.status === "completed" && (
-                <div className="flex items-center mt-1 text-sm text-muted-foreground gap-1">
+                <div className="flex items-center mt-2 text-m text-muted-foreground gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="14"
@@ -598,8 +401,8 @@ export default function WorkoutDetailPage() {
                 </div>
               )}
 
-              <div className="mt-2">
-                <Badge variant="outline" className="text-xs">
+              <div className="mt-3">
+                <Badge variant="outline" className="text-m">
                   {workout.template_name}
                 </Badge>
               </div>
@@ -609,8 +412,8 @@ export default function WorkoutDetailPage() {
           {/* Notes Section - More compact */}
           {workout.notes && (
             <div className="mb-4 p-3 bg-muted rounded-lg">
-              <p className="text-sm text-foreground font-medium mb-1">Notes:</p>
-              <p className="text-sm text-muted-foreground">{workout.notes}</p>
+              <p className="text-m text-foreground font-medium mb-1">Notes:</p>
+              <p className="text-m text-muted-foreground">{workout.notes}</p>
             </div>
           )}
 

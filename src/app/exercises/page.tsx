@@ -217,9 +217,7 @@ export default function ExercisesPage() {
       {/* Header styled to match reference design */}
       <div className="bg-background">
         <div className="flex justify-between items-center mb-4 mt-2">
-          <h1 className="text-xl sm:text-2xl font-bold truncate mr-2">
-            Exercises
-          </h1>
+          <h1 className="text-2xl font-bold truncate mr-2">Exercises</h1>
 
           {/* Create button for admin only*/}
           {isAdmin && (
@@ -227,11 +225,12 @@ export default function ExercisesPage() {
               <Button
                 variant="destructive"
                 size="icon"
-                className="rounded-md w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0"
+                className="rounded-md w-11 p-1 flex-shrink-0"
               >
-                <PlusCircleIcon className="size-4 sm:size-5" />
+                <PlusCircleIcon className="size-5" />
               </Button>
             </Link>
+            
           )}
         </div>
 

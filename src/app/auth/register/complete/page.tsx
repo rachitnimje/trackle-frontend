@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { checkUsernameAvailability } from "@/api/auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -36,6 +37,11 @@ export default function CompleteRegistration() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(
+    null
+  );
+  const [usernameCheckMsg, setUsernameCheckMsg] = useState<string>("");
+  const [checkingUsername, setCheckingUsername] = useState(false);
 
   const form = useForm<UsernameFormValues>({
     resolver: zodResolver(usernameSchema),
@@ -50,6 +56,27 @@ export default function CompleteRegistration() {
       router.push("/auth/login");
     }
   }, [status, router]);
+
+  // Real-time username check
+  useEffect(() => {
+    const sub = form.watch(async (values, { name }) => {
+      if (
+        name === "username" &&
+        values.username &&
+        values.username.length >= 3
+      ) {
+        setCheckingUsername(true);
+        const res = await checkUsernameAvailability(values.username);
+        setUsernameAvailable(res.available);
+        setUsernameCheckMsg(res.message);
+        setCheckingUsername(false);
+      } else if (name === "username") {
+        setUsernameAvailable(null);
+        setUsernameCheckMsg("");
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [form]);
 
   // Generate suggested username from email or name
   useEffect(() => {
@@ -69,6 +96,11 @@ export default function CompleteRegistration() {
   }, [session, form]);
 
   async function onSubmit(values: UsernameFormValues) {
+    // Prevent submit if username is not available
+    if (usernameAvailable === false) {
+      toast.error("This username is already taken. Please choose another.");
+      return;
+    }
     if (!session?.user?.email) {
       toast.error("Session error. Please try again.");
       return;
@@ -165,9 +197,41 @@ export default function CompleteRegistration() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter a unique username" {...field} />
+                    <Input
+                      placeholder="Enter a unique username"
+                      {...field}
+                      autoComplete="off"
+                      onBlur={async (e) => {
+                        if (field.value && field.value.length >= 3) {
+                          setCheckingUsername(true);
+                          const res = await checkUsernameAvailability(
+                            field.value
+                          );
+                          setUsernameAvailable(res.available);
+                          setUsernameCheckMsg(res.message);
+                          setCheckingUsername(false);
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
+                  <div className="text-xs mt-1">
+                    {checkingUsername && (
+                      <span className="text-muted-foreground">
+                        Checking username...
+                      </span>
+                    )}
+                    {!checkingUsername && usernameAvailable === false && (
+                      <span className="text-destructive">
+                        {usernameCheckMsg || "Username is already taken"}
+                      </span>
+                    )}
+                    {!checkingUsername && usernameAvailable === true && (
+                      <span className="text-green-600">
+                        {usernameCheckMsg || "Username is available"}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     Username can only contain letters, numbers, and underscores
                   </p>

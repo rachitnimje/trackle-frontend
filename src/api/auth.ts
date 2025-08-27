@@ -1,3 +1,15 @@
+// Check if a username is available
+export const checkUsernameAvailability = async (
+  username: string
+): Promise<{ available: boolean; message: string }> => {
+  const res = await api.get<{ available: boolean; message: string }>(
+    `/check-username?username=${encodeURIComponent(username)}`
+  );
+  if (res.success && res.data) {
+    return res.data;
+  }
+  return { available: false, message: "Could not check username availability" };
+};
 import { api } from "./apiClient";
 import {
   ApiResponse,

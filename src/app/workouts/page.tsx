@@ -814,7 +814,7 @@ export default function WorkoutsPage() {
                         <CardTitle className="text-lg font-semibold mb-1">
                           {workout.name}
                         </CardTitle>
-                        <div className="flex items-center text-s text-muted-foreground">
+                        <div className="flex items-center text-sm text-muted-foreground">
                           <CalendarIcon className="h-3 w-3 mr-1" />
                           {workout.created_at
                             ? (() => {
@@ -831,7 +831,7 @@ export default function WorkoutsPage() {
                             : "Date unavailable"}
                         </div>
                         <div className="mt-2">
-                          <Badge variant="outline" className="text-m py-0">
+                          <Badge variant="outline" className="text-s py-0">
                             {workout.template_name}
                           </Badge>
                         </div>

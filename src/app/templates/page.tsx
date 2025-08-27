@@ -157,7 +157,7 @@ function TemplatesPageInner() {
   };
 
   return (
-    <div className="pb-20 sm:pb-16 px-3 sm:px-1 max-w-full overflow-hidden">
+    <div className="pb-20 sm:pb-16 px-1 sm:px-1 max-w-full overflow-hidden">
       {/* Message Overlay */}
       <MessageOverlay
         message={successMessage || error || ""}
@@ -204,7 +204,7 @@ function TemplatesPageInner() {
           <Input
             type="search"
             placeholder="Search templates..."
-            className="pl-10 border rounded-md h-8 w-full"
+            className="pl-10 border rounded-md"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />

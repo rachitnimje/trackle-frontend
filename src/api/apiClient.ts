@@ -1,11 +1,11 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { ApiResponse, PaginatedResponse, ErrorResponse } from "./types";
-import { logger, reportError } from "@/utils/logger";
+import { logger } from "@/utils/logger";
 import { isValidUrl, RateLimiter } from "@/utils/security";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX; 
+const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX;
 
 // Rate limiter for API calls (1000 requests per minute)
 const rateLimiter = new RateLimiter(1000, 60 * 1000);
@@ -40,6 +40,11 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // Response interceptor for error handling
+interface BackendError {
+  message?: string;
+  error?: string;
+  [key: string]: unknown;
+}
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
@@ -51,17 +56,18 @@ apiClient.interceptors.response.use(
       status: response?.status || 0,
     };
 
-    // Handle different types of errors
     if (response) {
       switch (response.status) {
         case 401:
-          // Unauthorized - Show toast and redirect to login if not already there
           errorResponse.message = "You need to log in to access this resource";
           if (typeof window !== "undefined") {
             Cookies.remove("token");
-            // Show a toast if available (window.sonner or custom event)
             if (window.dispatchEvent) {
-              window.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: errorResponse.message } }));
+              window.dispatchEvent(
+                new CustomEvent("show-toast", {
+                  detail: { type: "error", message: errorResponse.message },
+                })
+              );
             }
             if (!window.location.pathname.startsWith("/auth/login")) {
               window.location.href = "/auth/login";
@@ -83,8 +89,10 @@ apiClient.interceptors.response.use(
           break;
         default:
           // Use backend error message if available
-          const backendMsg = (response.data as any)?.message || (response.data as any)?.error;
-          errorResponse.message = backendMsg || `Error: ${response.status} - ${error.message}`;
+          const backendData = response.data as BackendError;
+          const backendMsg = backendData?.message || backendData?.error;
+          errorResponse.message =
+            backendMsg || `Error: ${response.status} - ${error.message}`;
           logger.error(
             `API Error (${response.status})`,
             { message: errorResponse.message },
@@ -92,13 +100,13 @@ apiClient.interceptors.response.use(
           );
       }
     } else {
-      // Network errors (no response from server)
       errorResponse.message = "Network error: Unable to connect to the server";
       logger.error("Network error", { message: error.message }, "API");
     }
 
     // Attach the error info to the error object for easier access in components
-    (error as any).errorInfo = errorResponse;
+    // Use a symbol to avoid type errors
+    (error as { errorInfo?: ErrorResponse }).errorInfo = errorResponse;
 
     return Promise.reject(error);
   }
@@ -119,9 +127,9 @@ export const api = {
     return response.data;
   },
 
-  post: async function <T>(
+  post: async function <T, D = Record<string, unknown>>(
     url: string,
-    data?: any,
+    data?: D,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
     const fullUrl =
@@ -136,9 +144,9 @@ export const api = {
     return response.data;
   },
 
-  put: async function <T>(
+  put: async function <T, D = Record<string, unknown>>(
     url: string,
-    data?: any,
+    data?: D,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
     const fullUrl =
@@ -170,5 +178,4 @@ export const api = {
     const response = await apiClient.get<PaginatedResponse<T>>(fullUrl, config);
     return response.data;
   },
-  
 };

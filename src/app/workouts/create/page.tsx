@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { DropResult } from "@hello-pangea/dnd";
 import { createWorkout, getWorkouts } from "@/api/workouts";
 import { getTemplates, getTemplate } from "@/api/templates";
 import { getExercises } from "@/api/exercises";
@@ -11,6 +12,7 @@ import {
   TemplateListItem,
   Exercise,
   CreateWorkoutRequest,
+  TemplateExercise,
 } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,30 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DraftOrDeleteOverlay from "@/components/DraftOrDeleteOverlay";
+import ExerciseEntryInput from "@/components/ExerciseEntryInput";
+
 import { ArrowLeftIcon } from "@/components/Icons";
 import { MessageOverlay } from "@/components/MessageOverlay";
 import { logger } from "@/utils/logger";
-import DraftOrDeleteOverlay from "@/components/DraftOrDeleteOverlay";
-import ExerciseEntryInput from "@/components/ExerciseEntryInput"
-
-// Entry component for workout sets
-interface EntryInputProps {
-  exerciseId: number;
-  exerciseName: string;
-  entries: {
-    setNumber: number;
-    reps: number;
-    weight: number;
-  }[];
-  onAddSet: (exerciseId: number) => void;
-  onUpdateSet: (
-    exerciseId: number,
-    setIndex: number,
-    field: "reps" | "weight",
-    value: number
-  ) => void;
-  onRemoveSet: (exerciseId: number, setIndex: number) => void;
-}
 
 export default function CreateWorkoutPage() {
   const router = useRouter();
@@ -86,7 +70,9 @@ export default function CreateWorkoutPage() {
         }
       } catch (err) {
         setError("Failed to load templates");
-        logger.error("Error loading templates", err);
+        logger.error("Error loading templates", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     };
 
@@ -102,12 +88,14 @@ export default function CreateWorkoutPage() {
         if (response.success && Array.isArray(response.data)) {
           setExercises(response.data);
         } else {
-          logger.error("Failed to load exercises", response);
+          logger.error("Failed to load exercises", { response });
           setError("Failed to load exercises");
         }
       } catch (err) {
         setError("Failed to load exercises");
-        logger.error("Exercise loading error", err);
+        logger.error("Exercise loading error", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       } finally {
         setLoading(false);
       }
@@ -135,7 +123,9 @@ export default function CreateWorkoutPage() {
           }));
         }
       } catch (err) {
-        logger.error("Failed to get workout count", err);
+        logger.error("Failed to get workout count", {
+          error: err instanceof Error ? err.message : String(err),
+        });
         // Fallback if we can't get the count
         setFormData((prev) => ({
           ...prev,
@@ -196,24 +186,26 @@ export default function CreateWorkoutPage() {
           Array.isArray(response.data.exercises) &&
           response.data.exercises.length > 0
         ) {
-          response.data.exercises.forEach((exercise: any) => {
-            // Make sure exercise_id is a number
-            const exerciseId =
-              typeof exercise.exercise_id === "string"
-                ? parseInt(exercise.exercise_id, 10)
-                : exercise.exercise_id;
+          (response.data.exercises as TemplateExercise[]).forEach(
+            (exercise) => {
+              // Make sure exercise_id is a number
+              const exerciseId =
+                typeof exercise.exercise_id === "string"
+                  ? parseInt(exercise.exercise_id, 10)
+                  : exercise.exercise_id;
 
-            if (!isNaN(exerciseId)) {
-              newEntries[exerciseId] = Array.from(
-                { length: exercise.sets || 3 }, // Default to 3 sets if not specified
-                (_, i) => ({
-                  setNumber: i + 1,
-                  reps: 0,
-                  weight: 0,
-                })
-              );
+              if (!isNaN(exerciseId)) {
+                newEntries[exerciseId] = Array.from(
+                  { length: exercise.sets || 3 }, // Default to 3 sets if not specified
+                  (_, i) => ({
+                    setNumber: i + 1,
+                    reps: 0,
+                    weight: 0,
+                  })
+                );
+              }
             }
-          });
+          );
         } else {
           logger.warn(
             "No exercises found in template or exercises is not an array"
@@ -231,7 +223,9 @@ export default function CreateWorkoutPage() {
         );
       }
     } catch (err) {
-      logger.error("Failed to load template details", err);
+      logger.error("Failed to load template details", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       setError(
         "Failed to load template details: " +
           (err instanceof Error ? err.message : String(err))
@@ -363,9 +357,15 @@ export default function CreateWorkoutPage() {
       } else {
         setError("Failed to create workout");
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred while creating the workout");
-      logger.error("Error creating workout", err);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while creating the workout"
+      );
+      logger.error("Error creating workout", {
+        error: err instanceof Error ? err.message : String(err),
+      });
     } finally {
       setLoading(false);
     }
@@ -428,16 +428,17 @@ export default function CreateWorkoutPage() {
           `Failed to ${status === "draft" ? "save draft" : "create workout"}`
         );
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        err.message ||
-          `An error occurred while ${
-            status === "draft" ? "saving draft" : "creating the workout"
-          }`
+        err instanceof Error
+          ? err.message
+          : `An error occurred while ${
+              status === "draft" ? "saving draft" : "creating the workout"
+            }`
       );
       logger.error(
         `Error ${status === "draft" ? "saving draft" : "creating workout"}`,
-        err
+        { error: err instanceof Error ? err.message : String(err) }
       );
     } finally {
       setLoading(false);
@@ -633,8 +634,8 @@ export default function CreateWorkoutPage() {
                       if (selectedTemplate && selectedTemplate.exercises) {
                         const templateExercise =
                           selectedTemplate.exercises.find(
-                            (ex: any) =>
-                              parseInt(ex.exercise_id) === exerciseIdNum
+                            (ex: TemplateExercise) =>
+                              Number(ex.exercise_id) === exerciseIdNum
                           );
                         if (templateExercise) {
                           exerciseName = templateExercise.name;
@@ -668,43 +669,43 @@ export default function CreateWorkoutPage() {
               )}
             </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-red-600 hover:bg-red-700"
-                disabled={
-                  loading ||
-                  !selectedTemplate ||
-                  Object.entries(formData.entries).length === 0
-                }
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Saving...
-                  </>
-                ) : (
-                  "Log Workout"
-                )}
-              </Button>
+            <Button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700"
+              disabled={
+                loading ||
+                !selectedTemplate ||
+                Object.entries(formData.entries).length === 0
+              }
+            >
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                "Log Workout"
+              )}
+            </Button>
           </div>
         </div>
       </form>

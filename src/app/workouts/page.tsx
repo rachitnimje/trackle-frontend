@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getWorkouts, deleteWorkout } from "@/api/workouts";
 import { getTemplates } from "@/api/templates";
-import { Workout } from "@/api/types";
+import { Workout, TemplateListItem } from "@/api/types";
 import { SearchIcon, PlusCircleIcon, CalendarIcon } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -50,7 +50,7 @@ export default function WorkoutsPage() {
     from: Date | undefined;
     to: Date | undefined;
   }>({ from: undefined, to: undefined });
-  const [templates, setTemplates] = useState<any[]>([]); // To store template options for filtering
+  const [templates, setTemplates] = useState<TemplateListItem[]>([]); // To store template options for filtering
 
   // Collapsible states
   const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
@@ -65,7 +65,9 @@ export default function WorkoutsPage() {
           setTemplates(response.data);
         }
       } catch (err) {
-        logger.error("Failed to load templates", err);
+        logger.error("Failed to load templates", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     };
 
@@ -210,7 +212,9 @@ export default function WorkoutsPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching workouts");
-        logger.error("Error fetching workouts", err);
+        logger.error("Error fetching workouts", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       } finally {
         setLoading(false);
       }
@@ -251,7 +255,9 @@ export default function WorkoutsPage() {
       }
     } catch (err) {
       setError("An error occurred while deleting the workout");
-      logger.error("Error deleting workout", err);
+      logger.error("Error deleting workout", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       setDeleteDialogOpen(false);
     } finally {
       setDeleteLoading(false);

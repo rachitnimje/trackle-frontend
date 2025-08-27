@@ -3,7 +3,7 @@
 interface LogMessage {
   level: "log" | "error" | "warn" | "info";
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   timestamp: string;
   context?: string;
 }
@@ -13,14 +13,18 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 // Enhanced logger object
 export const logger = {
-  log: (message: string, data?: any, context?: string) => {
+  log: (message: string, data?: Record<string, unknown>, context?: string) => {
     if (isDevelopment) {
       console.log(`[${context || "APP"}] ${message}`, data || "");
     }
     // In production, you might want to send to an error reporting service
   },
 
-  error: (message: string, data?: any, context?: string) => {
+  error: (
+    message: string,
+    data?: Record<string, unknown>,
+    context?: string
+  ) => {
     const logMessage: LogMessage = {
       level: "error",
       message,
@@ -40,7 +44,7 @@ export const logger = {
     }
   },
 
-  warn: (message: string, data?: any, context?: string) => {
+  warn: (message: string, data?: Record<string, unknown>, context?: string) => {
     if (isDevelopment) {
       console.warn(
         `[WARN${context ? ` - ${context}` : ""}] ${message}`,
@@ -50,7 +54,7 @@ export const logger = {
     // In production, you might want to send warnings to monitoring service
   },
 
-  info: (message: string, data?: any, context?: string) => {
+  info: (message: string, data?: Record<string, unknown>, context?: string) => {
     if (isDevelopment) {
       console.info(
         `[INFO${context ? ` - ${context}` : ""}] ${message}`,
@@ -64,7 +68,7 @@ export const logger = {
 export const reportError = (
   error: Error,
   context?: string,
-  additionalData?: any
+  additionalData?: Record<string, unknown>
 ) => {
   logger.error(
     error.message,

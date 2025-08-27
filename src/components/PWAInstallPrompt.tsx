@@ -5,15 +5,22 @@ import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "@/components/Icons";
 import { logger } from "@/utils/logger";
 
+// Custom type for BeforeInstallPromptEvent
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
 export default function PWAInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Save the event that triggers the install prompt
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
-      setDeferredPrompt(event);
+      setDeferredPrompt(event as BeforeInstallPromptEvent);
       setIsVisible(true);
     };
 
@@ -63,8 +70,9 @@ export default function PWAInstallPrompt() {
     setIsVisible(false);
   };
 
-  if (!isVisible) return null;
-
+  if (!isVisible) {
+    return null;
+  }
   return (
     <div className="fixed bottom-16 right-4 z-50 p-4 rounded-lg bg-card shadow-lg max-w-xs border">
       <div className="flex flex-col space-y-2">

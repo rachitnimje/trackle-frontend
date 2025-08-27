@@ -24,7 +24,10 @@ export const authOptions: NextAuthOptions = {
         token.googleId = profile.sub;
         token.email = profile.email;
         token.name = profile.name;
-        token.picture = (profile as any).picture;
+        token.picture =
+          typeof profile === "object" && profile && "picture" in profile
+            ? (profile as { picture?: string }).picture
+            : undefined;
 
         // Set token expiry to 24 hours
         token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
@@ -61,7 +64,7 @@ export const authOptions: NextAuthOptions = {
       } else {
         // If token is empty or invalid, clear the session
         console.log("Session callback: No valid token, clearing session");
-        session.user = {} as any;
+        session.user = {} as Record<string, unknown>;
         session.expires = new Date(0).toISOString(); // Expire immediately
       }
       return session;
@@ -88,7 +91,10 @@ export const authOptions: NextAuthOptions = {
                 username: profile.name || profile.email?.split("@")[0],
                 googleId: profile.sub,
                 name: profile.name,
-                picture: (profile as any).picture,
+                picture:
+                  typeof profile === "object" && profile && "picture" in profile
+                    ? (profile as { picture?: string }).picture
+                    : undefined,
               }),
             }
           );
@@ -136,7 +142,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, 
+    maxAge: 30 * 24 * 60 * 60,
   },
   cookies: {
     sessionToken: {

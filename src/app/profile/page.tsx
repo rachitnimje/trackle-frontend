@@ -65,7 +65,7 @@ export default function ProfilePage() {
       toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Failed to logout");
-      logger.error("Error during logout", error);
+      logger.error("Error during logout", { error });
       // Fallback navigation if context logout fails
       router.push("/");
     } finally {

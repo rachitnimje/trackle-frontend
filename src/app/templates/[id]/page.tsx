@@ -35,7 +35,7 @@ export default function TemplateDetailPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching template details");
-        logger.error("Error fetching template details", err);
+        logger.error("Error fetching template details", { err });
       } finally {
         setLoading(false);
       }
@@ -68,7 +68,7 @@ export default function TemplateDetailPage() {
       }
     } catch (err) {
       setError("An error occurred while deleting the template");
-      logger.error("Error deleting template", err);
+      logger.error("Error deleting template", { err });
       setIsDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
@@ -138,7 +138,9 @@ export default function TemplateDetailPage() {
       <div className="space-y-3">
         {/* title with start workout button */}
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold break-words pr-2 flex-1 min-w-0">{template.name}</h1>
+          <h1 className="text-2xl font-bold break-words pr-2 flex-1 min-w-0">
+            {template.name}
+          </h1>
           <Button
             onClick={handleStartWorkout}
             className="bg-primary hover:bg-primary/90 text-primary-foreground flex-shrink-0"
@@ -195,7 +197,9 @@ export default function TemplateDetailPage() {
               <span className="block text-s text-muted-foreground mb-1">
                 Description
               </span>
-              <span className="block text-sm break-words">{template.description}</span>
+              <span className="block text-sm break-words">
+                {template.description}
+              </span>
             </div>
           )}
         </div>
@@ -213,7 +217,9 @@ export default function TemplateDetailPage() {
                   className="flex items-center justify-between py-2 px-1 hover:bg-muted/30 rounded transition-colors border-b"
                 >
                   <div className="flex flex-col min-w-0 flex-1 pr-2">
-                    <span className="font-medium break-words">{exercise.name}</span>
+                    <span className="font-medium break-words">
+                      {exercise.name}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {exercise.category}
                     </span>

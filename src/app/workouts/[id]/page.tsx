@@ -45,7 +45,9 @@ export default function WorkoutDetailPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching workout details");
-        logger.error("Error fetching workout details", err);
+        logger.error("Error fetching workout details", {
+          error: err instanceof Error ? err.message : String(err),
+        });
       } finally {
         setLoading(false);
       }
@@ -93,7 +95,9 @@ export default function WorkoutDetailPage() {
       }
     } catch (err) {
       setError("An error occurred while deleting the workout");
-      logger.error("Error deleting workout", err);
+      logger.error("Error deleting workout", {
+        error: err instanceof Error ? err.message : String(err),
+      });
       setDeleteDialogOpen(false);
     } finally {
       setDeleteLoading(false);
@@ -561,7 +565,21 @@ export default function WorkoutDetailPage() {
               {/* workout time */}
               {workout.status === "completed" && (
                 <div className="flex items-center mt-1 text-sm text-muted-foreground gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline-block"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
                   <span>
                     {(() => {
                       try {
@@ -570,7 +588,7 @@ export default function WorkoutDetailPage() {
 
                         const diffMs = updated.getTime() - created.getTime();
                         const diffMins = Math.floor(diffMs / 60000);
-                        
+
                         return `${diffMins} min${diffMins > 1 ? "s" : ""}`;
                       } catch (e) {
                         return "N/A";

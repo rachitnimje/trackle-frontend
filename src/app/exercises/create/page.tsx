@@ -69,7 +69,7 @@ export default function CreateExercisePage() {
           setEquipment(equipmentRes.data);
         }
       } catch (err) {
-        logger.error("Error fetching options", err);
+        logger.error("Error fetching options", { error: err });
         setError("Failed to load form options");
       }
     };
@@ -168,7 +168,7 @@ export default function CreateExercisePage() {
         setError(response.message || "Failed to create exercise");
       }
     } catch (err) {
-      logger.error("Error creating exercise", err);
+      logger.error("Error creating exercise", { error: err });
       setError("An error occurred while creating the exercise");
     } finally {
       setLoading(false);

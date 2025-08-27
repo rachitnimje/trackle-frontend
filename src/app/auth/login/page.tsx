@@ -52,7 +52,6 @@ export default function LoginPage() {
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      setIsLoading(true);
       const response = await login(values);
       if (response.success) {
         const userResponse = await getProfile();
@@ -70,14 +69,25 @@ export default function LoginPage() {
         setError(response.message || response.error || "Login failed");
       }
     } catch (error: any) {
-      // Try to extract error info from axios error
-      const errorInfo = error?.errorInfo;
-      if (errorInfo && errorInfo.message) {
-        setError(errorInfo.message);
-      } else if (error?.response?.data?.message) {
-        setError(error.response.data.message);
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response &&
+        error.response.data &&
+        typeof error.response.data === "object" &&
+        "message" in error.response.data
+      ) {
+        setError(
+          (error.response.data as { message?: string }).message ||
+            "An error occurred"
+        );
+      } else if (error instanceof Error) {
+        setError(error.message);
       } else {
-        setError(error?.message || "Something went wrong. Please try again.");
+        setError("An error occurred");
       }
       reportError(
         error instanceof Error ? error : new Error(String(error)),

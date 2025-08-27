@@ -7,10 +7,15 @@ import { ArrowLeft, Plus, Trash2, GripVertical } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import { getExercises } from "@/api/exercises";
 import { createTemplate } from "@/api/templates";
-import { Exercise, CreateTemplateRequest } from "@/api/types";
+import { Exercise, CreateTemplateRequest, TemplateExercise } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -129,7 +134,7 @@ export default function CreateTemplatePage() {
   const [exerciseCount, setExerciseCount] = useState(1);
 
   // Function to handle drag-and-drop reordering
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     // If dropped outside the list
     if (!result.destination) {
       return;
@@ -172,7 +177,7 @@ export default function CreateTemplatePage() {
         }
       } catch (err) {
         setError("An error occurred while fetching exercises");
-        logger.error("Error fetching exercises", err);
+        logger.error("Error fetching exercises", { error: err });
       } finally {
         setExercisesLoading(false);
       }
@@ -254,7 +259,7 @@ export default function CreateTemplatePage() {
       }
     } catch (err) {
       setError("An error occurred while creating the template");
-      logger.error("Error creating template", err);
+      logger.error("Error creating template", { error: err });
     } finally {
       setLoading(false);
     }
@@ -440,7 +445,7 @@ export default function CreateTemplatePage() {
 
                                               // Allow empty input for backspacing
                                               if (val === "") {
-                                                field.onChange(val as any);
+                                                field.onChange(val as unknown);
                                                 return;
                                               }
 

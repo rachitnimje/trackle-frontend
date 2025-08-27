@@ -1,9 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useState } from "react";
-import { MessageOverlay } from "@/components/MessageOverlay";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +27,7 @@ import { ArrowLeftIcon } from "@/components/Icons";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isAuthenticated, loading, setUser, refreshUserData } = useAuth();
+  const { isAuthenticated, loading, setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +66,7 @@ export default function LoginPage() {
         // Show backend error message if available
         setError(response.message || response.error || "Login failed");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (
         error &&
         typeof error === "object" &&

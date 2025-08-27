@@ -150,7 +150,7 @@ export default function WorkoutDetailPage() {
         status: "draft",
       });
       router.refresh();
-    } catch (err) {
+    } catch {
       setError("Failed to update draft");
     } finally {
       setEditLoading(false);
@@ -180,7 +180,7 @@ export default function WorkoutDetailPage() {
       router.push(
         `/workouts?success=true&message=Workout logged successfully!`
       );
-    } catch (err) {
+    } catch {
       setError("Failed to log workout");
     } finally {
       setEditLoading(false);
@@ -555,7 +555,7 @@ export default function WorkoutDetailPage() {
                             date,
                             "h:mm a"
                           )}`;
-                        } catch (e) {
+                        } catch {
                           return "Date unavailable";
                         }
                       })()
@@ -590,7 +590,7 @@ export default function WorkoutDetailPage() {
                         const diffMins = Math.floor(diffMs / 60000);
 
                         return `${diffMins} min${diffMins > 1 ? "s" : ""}`;
-                      } catch (e) {
+                      } catch {
                         return "N/A";
                       }
                     })()}

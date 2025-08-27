@@ -126,7 +126,7 @@ export default function ExercisesPage() {
           );
         }
       } catch (err) {
-        logger.error("Error fetching filter options", err);
+        logger.error("Error fetching filter options", { err });
       }
     };
 
@@ -163,7 +163,7 @@ export default function ExercisesPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching exercises");
-        logger.error("Error fetching exercises", err);
+        logger.error("Error fetching exercises", { err });
       } finally {
         setLoading(false);
       }
@@ -217,7 +217,9 @@ export default function ExercisesPage() {
       {/* Header styled to match reference design */}
       <div className="bg-background">
         <div className="flex justify-between items-center mb-4 mt-2">
-          <h1 className="text-xl sm:text-2xl font-bold truncate mr-2">Exercises</h1>
+          <h1 className="text-xl sm:text-2xl font-bold truncate mr-2">
+            Exercises
+          </h1>
 
           {/* Create button for admin only*/}
           {isAdmin && (
@@ -384,7 +386,9 @@ export default function ExercisesPage() {
                                 <path d="m15 18-6-6 6-6" />
                               </svg>
                             </Button>
-                            <h3 className="font-medium text-sm sm:text-base truncate">Category</h3>
+                            <h3 className="font-medium text-sm sm:text-base truncate">
+                              Category
+                            </h3>
                           </div>
                           <div className="grid gap-2">
                             <Button
@@ -438,7 +442,9 @@ export default function ExercisesPage() {
                                 <path d="m15 18-6-6 6-6" />
                               </svg>
                             </Button>
-                            <h3 className="font-medium text-sm sm:text-base truncate">Muscle</h3>
+                            <h3 className="font-medium text-sm sm:text-base truncate">
+                              Muscle
+                            </h3>
                           </div>
                           <div className="grid gap-2">
                             <Button
@@ -484,7 +490,10 @@ export default function ExercisesPage() {
           sortBy !== "name") && (
           <div className="flex flex-wrap gap-1 sm:gap-2 mt-3 mb-2">
             {searchQuery && (
-              <Badge variant="secondary" className="flex items-center gap-1 text-xs max-w-full">
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 text-xs max-w-full"
+              >
                 <span className="truncate">Search: "{searchQuery}"</span>
                 <button
                   onClick={() => setSearchQuery("")}
@@ -509,8 +518,13 @@ export default function ExercisesPage() {
               </Badge>
             )}
             {sortBy !== "name" && (
-              <Badge variant="secondary" className="flex items-center gap-1 text-xs">
-                <span className="truncate">Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label}</span>
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 text-xs"
+              >
+                <span className="truncate">
+                  Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label}
+                </span>
                 <button
                   onClick={() => handleSort("name")}
                   className="ml-1 hover:text-foreground flex-shrink-0"
@@ -534,7 +548,10 @@ export default function ExercisesPage() {
               </Badge>
             )}
             {activeCategory && (
-              <Badge variant="secondary" className="flex items-center gap-1 text-xs">
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 text-xs"
+              >
                 <span className="truncate">Category: {activeCategory}</span>
                 <button
                   onClick={() => handleFilterChange("Category", "")}
@@ -559,7 +576,10 @@ export default function ExercisesPage() {
               </Badge>
             )}
             {activeMuscle && (
-              <Badge variant="secondary" className="flex items-center gap-1 text-xs">
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 text-xs"
+              >
                 <span className="truncate">Muscle: {activeMuscle}</span>
                 <button
                   onClick={() => handleFilterChange("Muscle", "")}
@@ -642,7 +662,9 @@ export default function ExercisesPage() {
                       {exercise.primary_muscle && (
                         <>
                           <span className="mx-1 flex-shrink-0">•</span>
-                          <span className="truncate">{exercise.primary_muscle}</span>
+                          <span className="truncate">
+                            {exercise.primary_muscle}
+                          </span>
                         </>
                       )}
                     </div>

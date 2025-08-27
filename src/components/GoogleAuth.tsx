@@ -10,13 +10,9 @@ interface GoogleAuthProps {
   onSuccess?: () => void;
 }
 
-export default function GoogleAuth({
-  isLogin = true,
-  onSuccess,
-}: GoogleAuthProps) {
+export default function GoogleAuth({ isLogin = true }: GoogleAuthProps) {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const handleGoogleAuth = async () => {
     try {

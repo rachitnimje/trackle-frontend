@@ -27,7 +27,6 @@ import { ConfirmDelete } from "@/components/ConfirmDelete";
 import { logger } from "@/utils/logger";
 
 export default function WorkoutsPage() {
-  const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,14 +151,14 @@ export default function WorkoutsPage() {
                   return isBefore(workoutDate, dateRange.to);
                 }
                 return true;
-              } catch (e) {
+              } catch {
                 return true; // Include if date parsing fails
               }
             });
           }
 
           // Apply client-side sorting since the API doesn't support sorting
-          let sortedWorkouts = [...filteredWorkouts];
+          const sortedWorkouts = [...filteredWorkouts];
 
           if (sortBy === "name") {
             sortedWorkouts.sort((a, b) =>
@@ -179,7 +178,7 @@ export default function WorkoutsPage() {
                   ? new Date(b.created_at).getTime()
                   : 0;
                 return dateB - dateA;
-              } catch (e) {
+              } catch {
                 return 0;
               }
             });
@@ -193,7 +192,7 @@ export default function WorkoutsPage() {
                   ? new Date(b.created_at).getTime()
                   : 0;
                 return dateA - dateB;
-              } catch (e) {
+              } catch {
                 return 0;
               }
             });
@@ -271,12 +270,6 @@ export default function WorkoutsPage() {
     setPage(1); // Reset to first page when searching
   };
 
-  // Handle template filter change
-  const handleTemplateFilterChange = (value: string) => {
-    setSelectedTemplateId(value);
-    setPage(1); // Reset to first page when filtering
-  };
-
   // Handle multiple template selection
   const handleTemplateCheckboxChange = (
     templateId: string,
@@ -290,15 +283,6 @@ export default function WorkoutsPage() {
       }
     });
     setPage(1); // Reset to first page when filtering
-  };
-
-  // Clear all filters and sorting
-  const clearAllFilters = () => {
-    setSelectedTemplateId("");
-    setSelectedTemplateIds([]);
-    setDateRange({ from: undefined, to: undefined });
-    setSortBy("date");
-    setPage(1);
   };
 
   // Handle date range filter change
@@ -323,7 +307,7 @@ export default function WorkoutsPage() {
           const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
           const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
           return dateB - dateA;
-        } catch (e) {
+        } catch {
           return 0;
         }
       });
@@ -333,7 +317,7 @@ export default function WorkoutsPage() {
           const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
           const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
           return dateA - dateB;
-        } catch (e) {
+        } catch {
           return 0;
         }
       });
@@ -658,7 +642,7 @@ export default function WorkoutsPage() {
         <div className="flex flex-wrap gap-2 mt-3 mb-2">
           {searchQuery && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Search: "{searchQuery}"
+              Search: &quot;{searchQuery}&quot;
               <button
                 onClick={() => setSearchQuery("")}
                 className="ml-1 hover:text-foreground"
@@ -841,7 +825,7 @@ export default function WorkoutsPage() {
                                     date,
                                     "h:mm a"
                                   )}`;
-                                } catch (e) {
+                                } catch {
                                   return "Date unavailable";
                                 }
                               })()

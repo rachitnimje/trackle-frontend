@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Set the backend token as a cookie for API calls
           Cookies.set("token", session.backendToken);
 
-          // Fetch user profile from backend
+          // Always try to fetch user profile from backend (should include correct role)
           const response = await getProfile();
           if (response.success) {
             setUser(response.data);
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchUser();
-  }, [session, status]); // Re-run when session changes
+  }, [session, status, fetchUser]); // Re-run when session changes, include fetchUser in deps
 
   const refreshUserData = async () => {
     setLoading(true);
@@ -141,14 +141,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (hasBackendToken) {
           try {
             await apiLogout(); // Call backend logout first
-          } catch (error) {
+          } catch {
             // Continue with NextAuth logout even if backend logout fails
           }
         }
         try {
           // NextAuth signOut
           await signOut({ callbackUrl: "/", redirect: false });
-        } catch (error) {
+        } catch {
           // Ignore
         }
       } else {
@@ -201,7 +201,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const allCookies = document.cookie.split(";");
       allCookies.forEach((cookie) => {
         const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        const name =
+          eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
         if (name.includes("next-auth") || name === "token") {
           Cookies.remove(name);
           Cookies.remove(name, { path: "/" });

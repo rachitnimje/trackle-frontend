@@ -10,7 +10,7 @@ interface ClientLayoutProps {
 }
 
 export default function ClientLayout({ children, hideNav = false }: ClientLayoutProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   if (hideNav) {
     // Don't show header or navigation on auth pages or when explicitly hidden

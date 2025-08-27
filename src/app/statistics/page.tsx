@@ -2,13 +2,10 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
   BarChart3,
-  TrendingUp,
   Activity,
   Clock,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function StatisticsPage() {

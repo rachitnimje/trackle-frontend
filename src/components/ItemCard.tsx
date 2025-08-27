@@ -22,7 +22,6 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({
-  id,
   title,
   subtitle,
   linkPath,

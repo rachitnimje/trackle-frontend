@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
-  const { user, isAuthenticated, loading, logout, isGoogleUser } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   const handleLoginClick = () => {

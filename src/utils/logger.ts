@@ -25,14 +25,6 @@ export const logger = {
     data?: Record<string, unknown>,
     context?: string
   ) => {
-    const logMessage: LogMessage = {
-      level: "error",
-      message,
-      data,
-      timestamp: new Date().toISOString(),
-      context,
-    };
-
     if (isDevelopment) {
       console.error(
         `[ERROR${context ? ` - ${context}` : ""}] ${message}`,

@@ -15,7 +15,7 @@ import {
 } from "@hello-pangea/dnd";
 import { getExercises } from "@/api/exercises";
 import { createTemplate } from "@/api/templates";
-import { Exercise, CreateTemplateRequest, TemplateExercise } from "@/api/types";
+import { Exercise, CreateTemplateRequest } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -129,7 +129,7 @@ export default function CreateTemplatePage() {
   const [loading, setLoading] = useState(false);
   const [exercisesLoading, setExercisesLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   // Track exercise count to properly render and handle exercises
   const [exerciseCount, setExerciseCount] = useState(1);
 

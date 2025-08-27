@@ -75,7 +75,7 @@ export default function TemplatesPage() {
 
         if (response.success && Array.isArray(response.data)) {
           // Apply client-side sorting since the API doesn't support sorting
-          let sortedTemplates = [...response.data];
+          const sortedTemplates = [...response.data];
 
           if (sortBy === "name") {
             sortedTemplates.sort((a, b) => a.name.localeCompare(b.name));
@@ -103,7 +103,7 @@ export default function TemplatesPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching templates");
-        logger.error("Error fetching templates", err);
+        logger.error("Error fetching templates", { error: err });
       } finally {
         setLoading(false);
       }
@@ -131,12 +131,6 @@ export default function TemplatesPage() {
     { label: "Oldest First", value: "date_asc" },
   ];
 
-  // Open delete dialog
-  const openDeleteDialog = (id: string) => {
-    setTemplateToDelete(id);
-    setDeleteDialogOpen(true);
-  };
-
   // Handle template deletion
   const handleDeleteTemplate = async () => {
     if (!templateToDelete) return;
@@ -155,7 +149,7 @@ export default function TemplatesPage() {
       }
     } catch (err) {
       setError("An error occurred while deleting the template");
-      logger.error("Error deleting template", err);
+      logger.error("Error deleting template", { error: err });
       setDeleteDialogOpen(false);
     } finally {
       setDeleteLoading(false);
@@ -279,7 +273,9 @@ export default function TemplatesPage() {
         <div className="flex flex-wrap gap-2 mt-3 mb-2">
           {searchQuery && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              <span className="truncate">Search: "{searchQuery}"</span>
+              <span className="truncate">
+                Search: &quot;{searchQuery}&quot;
+              </span>
               <button
                 onClick={() => handleSearch("")}
                 className="ml-1 hover:text-foreground"
@@ -303,7 +299,9 @@ export default function TemplatesPage() {
           )}
           {sortBy !== "name" && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              <span className="truncate">Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label}</span>
+              <span className="truncate">
+                Sort: {sortOptions.find((opt) => opt.value === sortBy)?.label}
+              </span>
               <button
                 onClick={() => handleSort("name")}
                 className="ml-1 hover:text-foreground"

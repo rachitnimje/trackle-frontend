@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { register as registerUser } from "@/api/auth";
+import Image from "next/image";
 
 const usernameSchema = z.object({
   username: z
@@ -140,11 +140,16 @@ export default function CompleteRegistration() {
             Choose a unique username to finish setting up your account
           </p>
           {session.user.image && (
-            <img
-              src={session.user.image}
-              alt="Profile"
-              className="w-16 h-16 rounded-full mx-auto mt-4"
-            />
+            <div className="w-16 h-16 rounded-full mx-auto mt-4 overflow-hidden">
+              <Image
+                src={session.user.image}
+                alt="Profile"
+                width={64}
+                height={64}
+                className="w-16 h-16 object-cover rounded-full"
+                priority
+              />
+            </div>
           )}
           <p className="text-sm text-muted-foreground mt-2">
             {session.user.name} ({session.user.email})

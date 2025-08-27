@@ -49,7 +49,6 @@ export default function ProfilePage() {
   const {
     user,
     loading,
-    isGoogleUser,
     isLoggingOut: contextIsLoggingOut,
     logout: contextLogout,
   } = useAuth();

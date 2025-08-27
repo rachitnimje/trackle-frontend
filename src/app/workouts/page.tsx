@@ -812,9 +812,9 @@ export default function WorkoutsPage() {
                     <div className="flex items-center justify-between w-full">
                       <div className="flex-1">
                         <CardTitle className="text-lg font-semibold mb-1">
-                          {workout.name || "Unnamed Workout"}
+                          {workout.name}
                         </CardTitle>
-                        <div className="flex items-center text-xs text-muted-foreground">
+                        <div className="flex items-center text-s text-muted-foreground">
                           <CalendarIcon className="h-3 w-3 mr-1" />
                           {workout.created_at
                             ? (() => {
@@ -831,7 +831,7 @@ export default function WorkoutsPage() {
                             : "Date unavailable"}
                         </div>
                         <div className="mt-2">
-                          <Badge variant="outline" className="text-xs py-0">
+                          <Badge variant="outline" className="text-m py-0">
                             {workout.template_name}
                           </Badge>
                         </div>
@@ -842,7 +842,7 @@ export default function WorkoutsPage() {
                           e.stopPropagation();
                           handleDeleteClick(workout.id.toString());
                         }}
-                        className="p-1.5 text-primary ml-2"
+                        className="p-2.5 text-primary ml-2"
                         title="Delete workout"
                       >
                         <svg

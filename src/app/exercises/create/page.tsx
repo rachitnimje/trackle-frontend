@@ -375,7 +375,7 @@ export default function CreateExercisePage() {
           <div className="flex-grow"></div>
 
           {/* Fixed Button Row at Bottom - positioned above bottom navbar */}
-          <div className="fixed bottom-[3rem] left-0 right-0 bg-white py-4 px-4 shadow-sm mt-auto">
+          <div className="fixed bottom-[3rem] left-0 right-0 bg-primary py-4 px-4 shadow-sm mt-auto">
             <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
               <Button
                 type="button"

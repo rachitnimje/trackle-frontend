@@ -29,7 +29,7 @@ export const getWorkout = async (
 export const createWorkout = async (
   data: CreateWorkoutRequest
 ): Promise<ApiResponse<Workout>> => {
-  return await api.post<Workout>("/me/workouts", data);
+  return await api.post<Workout, CreateWorkoutRequest>("/me/workouts", data);
 };
 
 export const updateWorkout = async (

@@ -34,7 +34,7 @@ export default function CreateExercisePage() {
   const [equipment, setEquipment] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [success] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -99,29 +99,7 @@ export default function CreateExercisePage() {
     if (error) setError(null);
   };
 
-  // Generate preview avatar color based on category - using primarily red to match reference design
-  const getAvatarColor = (category: string): string => {
-    // For this design we'll primarily use red-based colors to match the reference design
-    const colors = [
-      "bg-red-500",
-      "bg-rose-500",
-      "bg-red-600",
-      "bg-rose-600",
-      "bg-red-400",
-    ];
 
-    if (!category) return colors[0];
-
-    // Simple hash function to get consistent color
-    let hash = 0;
-    for (let i = 0; i < category.length; i++) {
-      hash = category.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    // Use the hash to pick a color
-    const colorIndex = Math.abs(hash) % colors.length;
-    return colors[colorIndex];
-  };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {

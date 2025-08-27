@@ -159,7 +159,7 @@ function RegisterForm() {
   async function onSubmit(values: RegisterFormValues) {
     try {
       setIsLoading(true);
-  const { fullName, ...userData } = values;
+      const { fullName, ...userData } = values;
       const response = await registerUser({ ...userData, full_name: fullName });
       if (response.success) {
         toast.success("Registration successful! Please log in.");

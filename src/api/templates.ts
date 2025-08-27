@@ -34,7 +34,7 @@ export const getTemplate = async (
 export const createTemplate = async (
   template: CreateTemplateRequest
 ): Promise<ApiResponse<Template>> => {
-  return api.post<Template>("/me/templates", template);
+  return api.post<Template, CreateTemplateRequest>("/me/templates", template);
 };
 
 // Delete a template

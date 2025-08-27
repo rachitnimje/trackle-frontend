@@ -23,7 +23,10 @@ interface RegisterData {
 export const login = async (
   credentials: LoginCredentials
 ): Promise<ApiResponse<LoginResponseData>> => {
-  const response = await api.post<LoginResponseData, LoginCredentials>("/login", credentials);
+  const response = await api.post<LoginResponseData, LoginCredentials>(
+    "/login",
+    credentials
+  );
   if (response.success && response.data.token) {
     Cookies.set("token", response.data.token, { expires: 7 }); // Store for 7 days
   }

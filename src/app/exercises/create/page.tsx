@@ -99,8 +99,6 @@ export default function CreateExercisePage() {
     if (error) setError(null);
   };
 
-
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

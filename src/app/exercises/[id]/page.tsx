@@ -30,7 +30,10 @@ export default function ExerciseDetailPage() {
         }
       } catch (err) {
         setError("An error occurred while fetching exercise details");
-  logger.error("Error fetching exercise details", err as Record<string, unknown>);
+        logger.error(
+          "Error fetching exercise details",
+          err as Record<string, unknown>
+        );
       } finally {
         setLoading(false);
       }
@@ -60,7 +63,9 @@ export default function ExerciseDetailPage() {
   if (error || !exercise) {
     return (
       <div className="text-center py-10 px-4">
-        <p className="text-destructive mb-4 text-sm sm:text-base">{error || "Exercise not found"}</p>
+        <p className="text-destructive mb-4 text-sm sm:text-base">
+          {error || "Exercise not found"}
+        </p>
         <Link href="/exercises">
           <Button className="text-sm sm:text-base">Back to Exercises</Button>
         </Link>
@@ -108,17 +113,29 @@ export default function ExerciseDetailPage() {
           <div>
             <div className="space-y-1">
               <div className="flex justify-between py-1 border-b border-border">
-                <span className="text-m sm:text-base text-muted-foreground">Category</span>
-                <span className="text-m sm:text-base break-words ml-2">{exercise.category || "Not specified"}</span>
+                <span className="text-m sm:text-base text-muted-foreground">
+                  Category
+                </span>
+                <span className="text-m sm:text-base break-words ml-2">
+                  {exercise.category || "Not specified"}
+                </span>
               </div>
               <div className="flex justify-between py-1 border-b border-border">
-                <span className="text-m sm:text-base text-muted-foreground">Primary Muscle</span>
-                <span className="text-m sm:text-base break-words ml-2">{exercise.primary_muscle || "Not specified"}</span>
+                <span className="text-m sm:text-base text-muted-foreground">
+                  Primary Muscle
+                </span>
+                <span className="text-m sm:text-base break-words ml-2">
+                  {exercise.primary_muscle || "Not specified"}
+                </span>
               </div>
               {exercise.equipment && (
                 <div className="flex justify-between py-1 border-b border-border">
-                  <span className="text-m sm:text-base text-muted-foreground">Equipment</span>
-                  <span className="text-m sm:text-base break-words ml-2">{exercise.equipment}</span>
+                  <span className="text-m sm:text-base text-muted-foreground">
+                    Equipment
+                  </span>
+                  <span className="text-m sm:text-base break-words ml-2">
+                    {exercise.equipment}
+                  </span>
                 </div>
               )}
             </div>

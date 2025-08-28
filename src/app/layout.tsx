@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-// Import components
 import ClientLayout from "./client-layout";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import NextAuthProvider from "@/components/AuthProvider";
-
+import { cookies } from 'next/headers';
 import MobileGuard from "@/components/MobileGuard";
 import GoogleRegistrationGuard from "@/components/GoogleRegistrationGuard";
 
@@ -41,15 +39,22 @@ export const viewport = {
   themeColor: "#e11d48",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Read nonce from the x-nonce header set by middleware
+  let nonce: string | undefined = undefined;
+  try {
+    const cookieStore = await cookies();
+    nonce = cookieStore.get('x-nonce')?.value;
+  } catch {}
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        {...(nonce ? { nonce } : {})}
       >
         <ThemeProvider>
           <NextAuthProvider>

@@ -14,11 +14,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Add CSP headers for Google OAuth, configurable via env (no defaults)
+  // Generate a cryptographically secure nonce for each request
+  const nonce = Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString('base64');
   const response = NextResponse.next();
+  response.headers.set('x-nonce', nonce);
   const connectSrc = process.env.NEXT_PUBLIC_CSP_CONNECT_SRC;
   const imgSrc = process.env.NEXT_PUBLIC_CSP_IMG_SRC;
-  const scriptSrc = process.env.NEXT_PUBLIC_CSP_SCRIPT_SRC;
+  const scriptSrc = process.env.NEXT_PUBLIC_CSP_SCRIPT_SRC?.replace("'nonce-<RUNTIME_NONCE>'", `'nonce-${nonce}'`);
   const styleSrc = process.env.NEXT_PUBLIC_CSP_STYLE_SRC;
   const fontSrc = process.env.NEXT_PUBLIC_CSP_FONT_SRC;
   const frameSrc = process.env.NEXT_PUBLIC_CSP_FRAME_SRC;

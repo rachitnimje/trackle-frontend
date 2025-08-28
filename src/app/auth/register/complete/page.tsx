@@ -242,7 +242,7 @@ export default function CompleteRegistration() {
                       placeholder="Enter a unique username"
                       {...field}
                       autoComplete="off"
-                      onBlur={async (e) => {
+                      onBlur={async () => {
                         if (field.value && field.value.length >= 3) {
                           setCheckingUsername(true);
                           const res = await checkUsernameAvailability(

@@ -33,9 +33,12 @@ const authOptions: NextAuthOptions = {
         token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
 
         // Add backend token if available on the incoming user object
-        if (user && (user as any).backendToken) {
-          token.backendToken = (user as any).backendToken;
-          token.backendUserId = (user as any).backendUserId;
+        if (user) {
+          const maybeUser = user as unknown as Record<string, unknown>;
+          if (typeof maybeUser.backendToken === "string") {
+            token.backendToken = maybeUser.backendToken as string;
+            token.backendUserId = maybeUser.backendUserId as string | null;
+          }
         }
       }
 

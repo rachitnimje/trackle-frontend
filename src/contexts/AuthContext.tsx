@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
   ReactNode,
 } from "react";
 import { User } from "@/api/types";
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isGoogleUser, setIsGoogleUser] = useState(false);
   const { data: session, status } = useSession();
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       // Check for custom token first (existing users)
       const token = Cookies.get("token");
@@ -108,20 +109,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         return;
       }
-    } catch (err) {
+    } catch (caught) {
       setError("An error occurred while fetching the user profile");
       reportError(
-        err instanceof Error ? err : new Error(String(err)),
+        caught instanceof Error ? caught : new Error(String(caught)),
         "AuthContext user fetch"
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [session, status]);
 
+  // Ensure fetchUser identity is stable and run it when session/status change
   useEffect(() => {
     fetchUser();
-  }, [session, status, fetchUser]); // Re-run when session changes, include fetchUser in deps
+  }, [fetchUser, session, status]);
 
   const refreshUserData = async () => {
     setLoading(true);
@@ -154,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         await apiLogout();
       }
-    } catch (error) {
+    } catch {
       // Ignore
     } finally {
       setUser(null);
@@ -233,7 +235,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             sessionStorage.removeItem(key);
           }
         });
-      } catch (error) {}
+      } catch {}
       // Always redirect to home
       if (typeof window !== "undefined") {
         window.location.href = "/";

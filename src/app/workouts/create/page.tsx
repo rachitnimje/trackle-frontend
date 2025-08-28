@@ -138,101 +138,91 @@ function CreateWorkoutPageInner() {
   }, []);
 
   // Handle template change
-  const handleTemplateChange = React.useCallback(
-    async (value: string) => {
-      const templateId = value;
+  const handleTemplateChange = React.useCallback(async (value: string) => {
+    const templateId = value;
 
-      // Set loading state
-      setLoading(true);
-      setError(null);
+    // Set loading state
+    setLoading(true);
+    setError(null);
 
-      setFormData((prev) => ({
-        ...prev,
-        templateId,
-        entries: {},
-      }));
+    setFormData((prev) => ({
+      ...prev,
+      templateId,
+      entries: {},
+    }));
 
-      if (!templateId) {
-        setSelectedTemplate(null);
-        setLoading(false);
-        return;
-      }
+    if (!templateId) {
+      setSelectedTemplate(null);
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const response = await getTemplate(templateId);
+    try {
+      const response = await getTemplate(templateId);
 
-        if (response.success && response.data) {
-          setSelectedTemplate(response.data);
+      if (response.success && response.data) {
+        setSelectedTemplate(response.data);
 
-          // Initialize entries with template exercises
-          const newEntries: Record<
-            number,
-            { setNumber: number; reps: number; weight: number }[]
-          > = {};
+        // Initialize entries with template exercises
+        const newEntries: Record<
+          number,
+          { setNumber: number; reps: number; weight: number }[]
+        > = {};
 
-          // Check if exercises array exists and has items
-          if (
-            Array.isArray(response.data.exercises) &&
-            response.data.exercises.length > 0
-          ) {
-            (response.data.exercises as TemplateExercise[]).forEach(
-              (exercise) => {
-                // Make sure exercise_id is a number
-                const exerciseId =
-                  typeof exercise.exercise_id === "string"
-                    ? parseInt(exercise.exercise_id, 10)
-                    : exercise.exercise_id;
+        // Check if exercises array exists and has items
+        if (
+          Array.isArray(response.data.exercises) &&
+          response.data.exercises.length > 0
+        ) {
+          (response.data.exercises as TemplateExercise[]).forEach(
+            (exercise) => {
+              // Make sure exercise_id is a number
+              const exerciseId =
+                typeof exercise.exercise_id === "string"
+                  ? parseInt(exercise.exercise_id, 10)
+                  : exercise.exercise_id;
 
-                if (!isNaN(exerciseId)) {
-                  newEntries[exerciseId] = Array.from(
-                    { length: exercise.sets || 3 }, // Default to 3 sets if not specified
-                    (_, i) => ({
-                      setNumber: i + 1,
-                      reps: 0,
-                      weight: 0,
-                    })
-                  );
-                }
+              if (!isNaN(exerciseId)) {
+                newEntries[exerciseId] = Array.from(
+                  { length: exercise.sets || 3 }, // Default to 3 sets if not specified
+                  (_, i) => ({
+                    setNumber: i + 1,
+                    reps: 0,
+                    weight: 0,
+                  })
+                );
               }
-            );
-          } else {
-            logger.warn(
-              "No exercises found in template or exercises is not an array"
-            );
-          }
-
-          setFormData((prev) => ({
-            ...prev,
-            entries: newEntries,
-          }));
+            }
+          );
         } else {
-          logger.error("API returned success=false or no data");
-          setError(
-            "Failed to load template: " + (response.message || "Unknown error")
+          logger.warn(
+            "No exercises found in template or exercises is not an array"
           );
         }
-      } catch (err) {
-        logger.error("Failed to load template details", {
-          error: err instanceof Error ? err.message : String(err),
-        });
+
+        setFormData((prev) => ({
+          ...prev,
+          entries: newEntries,
+        }));
+      } else {
+        logger.error("API returned success=false or no data");
         setError(
-          "Failed to load template details: " +
-            (err instanceof Error ? err.message : String(err))
+          "Failed to load template: " + (response.message || "Unknown error")
         );
-      } finally {
-        // Always reset loading state
-        setLoading(false);
       }
-    },
-    [
-      setFormData,
-      setSelectedTemplate,
-      setLoading,
-      setError,
-      getTemplate,
-      logger,
-    ]
-  );
+    } catch (err) {
+      logger.error("Failed to load template details", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+      setError(
+        "Failed to load template details: " +
+          (err instanceof Error ? err.message : String(err))
+      );
+    } finally {
+      // Always reset loading state
+      setLoading(false);
+    }
+  }, []);
 
   // Check for template parameter in URL and auto-select it
   useEffect(() => {

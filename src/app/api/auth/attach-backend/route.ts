@@ -32,12 +32,15 @@ export async function POST(req: Request) {
     }
 
     // Decode existing NextAuth JWT if present
-    let decoded: any = {};
+    let decoded: Record<string, unknown> = {};
     if (existing) {
       try {
-        const d = await decode({ token: existing, secret: secret as string });
-        if (d) decoded = d as Record<string, unknown>;
-      } catch (e) {
+        const d = (await decode({
+          token: existing,
+          secret: secret as string,
+        })) as Record<string, unknown> | null;
+        if (d) decoded = d;
+      } catch {
         // ignore decode errors
         decoded = {};
       }

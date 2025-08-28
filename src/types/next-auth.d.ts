@@ -13,6 +13,10 @@ declare module "next-auth" {
   interface User {
     backendToken?: string;
     backendUserId?: string;
+    googleId?: string;
+    email?: string;
+    name?: string;
+    image?: string;
   }
 
   interface JWT {

@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import NextAuthProvider from "@/components/AuthProvider";
 
 import MobileGuard from "@/components/MobileGuard";
+import GoogleRegistrationGuard from "@/components/GoogleRegistrationGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,12 +55,14 @@ export default function RootLayout({
           <NextAuthProvider>
             <AuthProvider>
               <MobileGuard>
-                <ClientLayout>
-                  <main className="flex-1 container mx-auto px-4 py-2 pb-16">
-                    {children}
-                  </main>
-                  <PWAInstallPrompt />
-                </ClientLayout>
+                <GoogleRegistrationGuard>
+                  <ClientLayout>
+                    <main className="flex-1 container mx-auto px-4 py-2 pb-16">
+                      {children}
+                    </main>
+                    <PWAInstallPrompt />
+                  </ClientLayout>
+                </GoogleRegistrationGuard>
               </MobileGuard>
               <Toaster position="top-center" />
             </AuthProvider>

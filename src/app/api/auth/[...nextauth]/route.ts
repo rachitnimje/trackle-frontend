@@ -32,10 +32,10 @@ const authOptions: NextAuthOptions = {
         // Set token expiry to 24 hours
         token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
 
-        // Add backend token if available
-        if (user.backendToken) {
-          token.backendToken = user.backendToken;
-          token.backendUserId = user.backendUserId;
+        // Add backend token if available on the incoming user object
+        if (user && (user as any).backendToken) {
+          token.backendToken = (user as any).backendToken;
+          token.backendUserId = (user as any).backendUserId;
         }
       }
 

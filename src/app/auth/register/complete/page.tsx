@@ -42,6 +42,7 @@ export default function CompleteRegistration() {
   );
   const [usernameCheckMsg, setUsernameCheckMsg] = useState<string>("");
   const [checkingUsername, setCheckingUsername] = useState(false);
+  const [suggestedUsername, setSuggestedUsername] = useState<string>("");
 
   const form = useForm<UsernameFormValues>({
     resolver: zodResolver(usernameSchema),
@@ -91,6 +92,7 @@ export default function CompleteRegistration() {
       suggested = suggested.replace(/[^a-zA-Z0-9_]/g, "").substring(0, 15);
       if (suggested) {
         form.setValue("username", suggested);
+        setSuggestedUsername(suggested);
       }
     }
   }, [session, form]);
@@ -98,7 +100,9 @@ export default function CompleteRegistration() {
   async function onSubmit(values: UsernameFormValues) {
     // Prevent submit if username is not available
     if (usernameAvailable === false) {
-      toast.error("This username is already taken. Please choose another.");
+      toast.error(
+        "This username is already taken. Try a suggestion below or choose another."
+      );
       return;
     }
     if (!session?.user?.email) {
@@ -130,15 +134,52 @@ export default function CompleteRegistration() {
       const data = await response.json();
 
       if (data.success) {
-        // Store the backend token
+        // Store the backend token (30 days) as cookie for API client
         document.cookie = `token=${data.data.token}; path=/; max-age=${
           30 * 24 * 60 * 60
-        }`; // 30 days
+        }`;
 
-        toast.success("Registration completed successfully!");
-        router.push("/"); // Redirect to home
+        // Also attach backend token into NextAuth session via server helper so session contains backendToken immediately
+        try {
+          await fetch("/api/auth/attach-backend", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              backendToken: data.data.token,
+              backendUserId: data.data.user?.id || null,
+            }),
+          });
+        } catch (e) {
+          console.warn(
+            "Failed to attach backend token to NextAuth session:",
+            e
+          );
+        }
+
+        // Give clear success feedback then reload so AuthContext picks up the new token
+        toast.success("Registration completed — signing you in...");
+        // Small delay for toast UX then reload
+        setTimeout(() => {
+          // Reload the page so the AuthProvider/AuthContext can detect the backend token and fetch the profile
+          window.location.href = "/";
+        }, 800);
+        return;
+      }
+
+      // Handle specific backend error messages
+      const msg = data.message || data.error || "Registration failed";
+      if (response.status === 409 || /username/i.test(msg)) {
+        // Username conflict — show clear message and suggest alternatives
+        toast.error(msg || "This username is already taken.");
+        setUsernameAvailable(false);
+        // Create a suggestion with numeric suffix to help user
+        const base = (values.username || suggestedUsername || "user")
+          .replace(/[^a-zA-Z0-9_]/g, "")
+          .substring(0, 12);
+        const alt = `${base}${Math.floor(Math.random() * 90) + 10}`;
+        setSuggestedUsername(alt);
       } else {
-        toast.error(data.message || "Registration failed");
+        toast.error(msg);
       }
     } catch (error) {
       console.error("Registration completion error:", error);
@@ -210,6 +251,15 @@ export default function CompleteRegistration() {
                           setUsernameAvailable(res.available);
                           setUsernameCheckMsg(res.message);
                           setCheckingUsername(false);
+                          // if username is taken, generate a suggestion
+                          if (!res.available) {
+                            const base = field.value
+                              .replace(/[^a-zA-Z0-9_]/g, "")
+                              .substring(0, 12);
+                            setSuggestedUsername(
+                              `${base}${Math.floor(Math.random() * 90) + 10}`
+                            );
+                          }
                         }
                       }}
                     />
@@ -230,6 +280,26 @@ export default function CompleteRegistration() {
                       <span className="text-green-600">
                         {usernameCheckMsg || "Username is available"}
                       </span>
+                    )}
+                    {/* Suggested username helper */}
+                    {!checkingUsername && suggestedUsername && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          Suggested:
+                        </span>
+                        <span className="text-sm font-medium">
+                          {suggestedUsername}
+                        </span>
+                        <button
+                          type="button"
+                          className="text-primary underline text-xs"
+                          onClick={() =>
+                            form.setValue("username", suggestedUsername)
+                          }
+                        >
+                          Use
+                        </button>
+                      </div>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { getWorkout, deleteWorkout, updateWorkout } from "@/api/workouts";
@@ -113,13 +113,14 @@ export default function WorkoutDetailPage() {
     const hasEntriesChange =
       JSON.stringify(editEntries) !== JSON.stringify(originalData.entries);
 
-    setHasUnsavedChanges(hasNameChange || hasNotesChange || hasEntriesChange);
+    const hasChanges = hasNameChange || hasNotesChange || hasEntriesChange;
+
+    setHasUnsavedChanges(hasChanges);
   }, [editName, editNotes, editEntries, originalData, workout]);
 
-  // Navigation guards for unsaved changes
+  // Simple and reliable navigation guard for mobile
   useEffect(() => {
     if (!hasUnsavedChanges || !workout || workout.status !== "draft") return;
-
     // Handle browser back button and refresh
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -127,21 +128,21 @@ export default function WorkoutDetailPage() {
       return "";
     };
 
-    // Handle programmatic navigation (mobile back gestures, etc.)
+    // Simplified popstate handler that works better on mobile
     const handlePopState = (e: PopStateEvent) => {
       if (hasUnsavedChanges) {
-        e.preventDefault();
+        // Don't try to prevent the event, just handle it
         setShowDraftOverlay(true);
-        // Push the current state back to prevent navigation
+        // Push state back to stay on the current page
         window.history.pushState(null, "", window.location.href);
       }
     };
 
+    // Add a state to the history to detect back navigation
+    window.history.pushState(null, "", window.location.href);
+
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.addEventListener("popstate", handlePopState);
-
-    // Push an initial state to detect back navigation
-    window.history.pushState(null, "", window.location.href);
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);

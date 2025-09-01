@@ -121,6 +121,7 @@ export default function CompleteRegistration() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include", // Include cookies for CORS
           body: JSON.stringify({
             email: session.user.email,
             username: values.username,
@@ -132,6 +133,8 @@ export default function CompleteRegistration() {
       );
 
       const data = await response.json();
+
+      console.log("Backend response:", { status: response.status, data });
 
       if (data.success) {
         // Store the backend token (30 days) as cookie for API client

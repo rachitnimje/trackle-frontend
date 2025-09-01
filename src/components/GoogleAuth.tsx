@@ -3,6 +3,7 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface GoogleAuthProps {
   isLogin?: boolean;
@@ -18,12 +19,29 @@ export default function GoogleAuth({ isLogin = true }: GoogleAuthProps) {
       setLoading(true);
 
       // Use signIn with redirect for better OAuth flow
-      await signIn("google", {
+      const result = await signIn("google", {
         callbackUrl: isLogin ? "/" : "/auth/register/complete",
-        redirect: true,
+        redirect: false, // Handle redirect manually for better error handling
       });
+
+      if (result?.error) {
+        console.error("Google Auth Error:", result.error);
+        toast.error("Failed to authenticate with Google. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // If no error, handle redirect manually
+      if (result?.url) {
+        toast.success("Redirecting...");
+        window.location.href = result.url;
+      } else {
+        // Fallback redirect if no URL provided
+        window.location.href = isLogin ? "/" : "/auth/register/complete";
+      }
     } catch (error) {
       console.error("Google Auth Error:", error);
+      toast.error("Authentication failed. Please try again.");
       setLoading(false);
     }
   };

@@ -20,6 +20,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, account, profile, user }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account && profile) {
+        console.log("JWT callback - new sign in with account and profile");
         token.accessToken = account.access_token;
         token.googleId = profile.sub;
         token.email = profile.email;
@@ -56,6 +57,7 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       // Send properties to the client
+      console.log("Session callback - token keys:", Object.keys(token));
       if (session.user && token && Object.keys(token).length > 0) {
         session.accessToken = token.accessToken as string;
         session.user.googleId = token.googleId as string;
@@ -91,9 +93,16 @@ const authOptions: NextAuthOptions = {
       // Handles where to redirect after sign in
       console.log("NextAuth Redirect:", { url, baseUrl });
 
-      // Always redirect to home page after sign in
-      if (url.startsWith(baseUrl)) return url;
+      // Handle specific OAuth flow redirects
+      if (url.includes("/auth/register/complete")) {
+        return `${baseUrl}/auth/register/complete`;
+      }
+
+      // Allow any relative URL within the app
       if (url.startsWith("/")) return `${baseUrl}${url}`;
+
+      // Allow any URL that starts with baseUrl
+      if (url.startsWith(baseUrl)) return url;
 
       // Default redirect to home
       return baseUrl;

@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { MessageOverlay } from "@/components/MessageOverlay";
 import { ConfirmDelete } from "@/components/ConfirmDelete";
+import DraftOrDeleteOverlay from "@/components/DraftOrDeleteOverlay";
 import { ArrowLeftIcon, DumbbellIcon, CalendarIcon } from "@/components/Icons";
 import { format } from "date-fns";
 import { logger } from "@/utils/logger";
@@ -33,6 +34,16 @@ export default function WorkoutDetailPage() {
   >({});
   const [saveDraftLoading, setSaveDraftLoading] = useState(false);
   const [logWorkoutLoading, setLogWorkoutLoading] = useState(false);
+  const [showDraftOverlay, setShowDraftOverlay] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [originalData, setOriginalData] = useState<{
+    name: string;
+    notes: string;
+    entries: Record<
+      number,
+      { setNumber: number; reps: number; weight: number }[]
+    >;
+  } | null>(null);
 
   useEffect(() => {
     const fetchWorkout = async () => {
@@ -77,8 +88,66 @@ export default function WorkoutDetailPage() {
         });
       });
       setEditEntries(entries);
+
+      // Store original data for comparison
+      setOriginalData({
+        name: workout.name,
+        notes: workout.notes || "",
+        entries: entries,
+      });
+      setHasUnsavedChanges(false);
     }
   }, [workout]);
+
+  // Check for unsaved changes
+  useEffect(() => {
+    if (!originalData || !workout || workout.status !== "draft") {
+      setHasUnsavedChanges(false);
+      return;
+    }
+
+    const hasNameChange = editName !== originalData.name;
+    const hasNotesChange = editNotes !== originalData.notes;
+
+    // Check for entries changes
+    const hasEntriesChange =
+      JSON.stringify(editEntries) !== JSON.stringify(originalData.entries);
+
+    setHasUnsavedChanges(hasNameChange || hasNotesChange || hasEntriesChange);
+  }, [editName, editNotes, editEntries, originalData, workout]);
+
+  // Navigation guards for unsaved changes
+  useEffect(() => {
+    if (!hasUnsavedChanges || !workout || workout.status !== "draft") return;
+
+    // Handle browser back button and refresh
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    };
+
+    // Handle programmatic navigation (mobile back gestures, etc.)
+    const handlePopState = (e: PopStateEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        setShowDraftOverlay(true);
+        // Push the current state back to prevent navigation
+        window.history.pushState(null, "", window.location.href);
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    // Push an initial state to detect back navigation
+    window.history.pushState(null, "", window.location.href);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasUnsavedChanges, workout]);
 
   const handleDelete = async () => {
     try {
@@ -188,6 +257,18 @@ export default function WorkoutDetailPage() {
     }
   };
 
+  const handleBackNavigation = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    if (hasUnsavedChanges && workout?.status === "draft") {
+      setShowDraftOverlay(true);
+    } else {
+      router.push("/workouts");
+    }
+  };
+
   const addSet = (exerciseId: number) => {
     setEditEntries((prev) => {
       const currentSets = prev[exerciseId] || [];
@@ -270,13 +351,13 @@ export default function WorkoutDetailPage() {
   return (
     <div className="pb-16 px-2">
       {/* Back button */}
-      <Link
-        href="/workouts"
+      <button
+        onClick={handleBackNavigation}
         className="inline-flex items-center mb-3 text-muted-foreground hover:text-foreground"
       >
         <ArrowLeftIcon className="mr-2 h-4 w-4" />
         Back to Workouts
-      </Link>
+      </button>
 
       {/* Editable Draft Section */}
       {workout.status === "draft" ? (
@@ -492,6 +573,21 @@ export default function WorkoutDetailPage() {
         description="Are you sure you want to delete this workout? This action cannot be undone."
         itemName={workout?.name || "this workout"}
         loading={deleteLoading}
+      />
+
+      {/* Draft or Delete Overlay */}
+      <DraftOrDeleteOverlay
+        open={showDraftOverlay}
+        onDraft={async () => {
+          setShowDraftOverlay(false);
+          await handleUpdateDraft();
+          router.push("/workouts");
+        }}
+        onDelete={() => {
+          setShowDraftOverlay(false);
+          router.push("/workouts");
+        }}
+        onCancel={() => setShowDraftOverlay(false)}
       />
     </div>
   );

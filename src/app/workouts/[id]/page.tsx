@@ -31,7 +31,8 @@ export default function WorkoutDetailPage() {
   const [editEntries, setEditEntries] = useState<
     Record<number, { setNumber: number; reps: number; weight: number }[]>
   >({});
-  const [editLoading, setEditLoading] = useState(false);
+  const [saveDraftLoading, setSaveDraftLoading] = useState(false);
+  const [logWorkoutLoading, setLogWorkoutLoading] = useState(false);
 
   useEffect(() => {
     const fetchWorkout = async () => {
@@ -131,7 +132,7 @@ export default function WorkoutDetailPage() {
 
   const handleUpdateDraft = async () => {
     if (!workout) return;
-    setEditLoading(true);
+    setSaveDraftLoading(true);
     const entriesArray = Object.entries(editEntries).flatMap(
       ([exerciseId, sets]) =>
         sets.map((set) => ({
@@ -153,13 +154,13 @@ export default function WorkoutDetailPage() {
     } catch {
       setError("Failed to update draft");
     } finally {
-      setEditLoading(false);
+      setSaveDraftLoading(false);
     }
   };
 
   const handleLogWorkout = async () => {
     if (!workout) return;
-    setEditLoading(true);
+    setLogWorkoutLoading(true);
     const entriesArray = Object.entries(editEntries).flatMap(
       ([exerciseId, sets]) =>
         sets.map((set) => ({
@@ -183,7 +184,7 @@ export default function WorkoutDetailPage() {
     } catch {
       setError("Failed to log workout");
     } finally {
-      setEditLoading(false);
+      setLogWorkoutLoading(false);
     }
   };
 
@@ -325,19 +326,19 @@ export default function WorkoutDetailPage() {
           <div className="flex gap-4 mt-4">
             <Button
               onClick={handleUpdateDraft}
-              disabled={editLoading}
+              disabled={saveDraftLoading || logWorkoutLoading}
               variant="outline"
               className="flex-1"
             >
-              {editLoading ? "Saving..." : "Save Draft"}
+              {saveDraftLoading ? "Saving..." : "Save Draft"}
             </Button>
             <Button
               variant="destructive"
               onClick={handleLogWorkout}
-              disabled={editLoading}
+              disabled={saveDraftLoading || logWorkoutLoading}
               className="flex-1"
             >
-              {editLoading ? "Logging..." : "Log Workout"}
+              {logWorkoutLoading ? "Logging..." : "Log Workout"}
             </Button>
           </div>
         </div>
